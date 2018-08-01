@@ -101,7 +101,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
 
                         break;
                     case R.id.menu_update_address:
-
+                        ToastUtil.show(getApplicationContext(),"暂未开放此功能");
                         break;
                     case R.id.menu_update:
                         ToastUtil.show(getApplicationContext(), R.string.no_update);
