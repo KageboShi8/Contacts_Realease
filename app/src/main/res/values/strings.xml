@@ -1,0 +1,33 @@
+<resources>
+    <string name="app_name">MyContacts</string>
+
+    <string name="clear_contacts">清空联系人</string>
+    <string name="contacts_Activity">联系人</string>
+    <string name="contacts_clear">联系人已清空</string>
+    <string name="download_contacts">下载联系人</string>
+    <string name="contacts_downloaded">联系人已下载</string>
+
+    <string name="login">登录</string>
+    <string name="login_fail">登录失败</string>
+    <string name="network_error">网络错误</string>
+
+
+    <string name="no_update">暂时没有更新</string>
+    <string name="update">更新</string>
+    <string name="update_address">修改服务器</string>
+    <string name="version_number">版本号</string>
+    <string name="version_number_is">当前版本号为</string>
+
+    <string name="user_name">用户名</string>
+    <string name="password">密码</string>
+
+
+    <string name="permission_denied">未获得权限</string>
+    <string name="permission_granted">获得权限</string>
+
+    <string name="name_illegal">用户名不能为空</string>
+    <string name="password_illegal">密码不能为空</string>
+    <string name="download_failure">下载失败</string>
+
+
+</resources>
