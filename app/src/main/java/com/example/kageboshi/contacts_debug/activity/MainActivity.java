@@ -1,7 +1,10 @@
 package com.example.kageboshi.contacts_debug.activity;
 
 import android.Manifest;
+import android.app.AlertDialog;
+import android.app.ProgressDialog;
 import android.content.Context;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.content.pm.PackageInfo;
@@ -54,6 +57,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
     private String userInfo;
     private String passwordInfo;
     private String imei;
+    private ProgressDialog progressDialog;
 
     @RequiresApi(api = Build.VERSION_CODES.M)
     @Override
@@ -94,14 +98,15 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
                         PackageManager packageManager = getPackageManager();
                         try {
                             String versionName = packageManager.getPackageInfo(getPackageName(), 0).versionName;
-                            ToastUtil.show(getApplicationContext(), R.string.version_number_is + versionName);
+                            Log.e("aaa", versionName);
+                            ToastUtil.show(getApplicationContext(), getResources().getString(R.string.version_number_is) + versionName);
                         } catch (PackageManager.NameNotFoundException e) {
                             e.printStackTrace();
                         }
 
                         break;
                     case R.id.menu_update_address:
-                        ToastUtil.show(getApplicationContext(),"暂未开放此功能");
+                        ToastUtil.show(getApplicationContext(), "暂未开放此功能");
                         break;
                     case R.id.menu_update:
                         ToastUtil.show(getApplicationContext(), R.string.no_update);
@@ -112,6 +117,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
             }
         });
     }
+
 
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
@@ -159,6 +165,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         passwordInfo = sharedPreferences.getString(Constants.INFO_PASSWORD, "");
         userInfo = sharedPreferences.getString(Constants.INFO_NAME, "");
         if (passwordInfo != "" && userInfo != "") {
+
             return true;
         } else {
             return false;
@@ -268,6 +275,16 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
             }
         } else {
             super.onRequestPermissionsResult(requestCode, permissions, grantResults);
+        }
+    }
+
+    @Override
+    protected void onResume() {
+        super.onResume();
+        if (getUserInfo()){
+          bindView();
+          editPassword.setText(passwordInfo);
+          editUser.setText(userInfo);
         }
     }
 }

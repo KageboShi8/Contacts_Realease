@@ -138,7 +138,6 @@ public class ContactActivity extends AppCompatActivity implements View.OnClickLi
                             showContacts();
                             ToastUtil.show(getApplicationContext(), R.string.contacts_downloaded);
                         }
-
                     }
 
                     @Override
