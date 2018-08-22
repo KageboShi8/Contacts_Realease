@@ -1,7 +1,9 @@
 package com.example.kageboshi.contacts_debug.activity;
 
 import android.Manifest;
+import android.content.Context;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.content.pm.PackageManager;
 import android.os.Build;
 import android.os.Bundle;
@@ -48,6 +50,7 @@ public class ContactActivity extends AppCompatActivity implements View.OnClickLi
     private Button buttonClear;
     private TextView textTitle;
     private List<ContactResponseModel.DataBean.ContactsBean> contactsList;
+    private TextView tv_name;
 
     @RequiresApi(api = Build.VERSION_CODES.M)
     @Override
@@ -56,12 +59,14 @@ public class ContactActivity extends AppCompatActivity implements View.OnClickLi
         setContentView(R.layout.activity_contact);
         Intent intent = getIntent();
         token = intent.getStringExtra(Constants.TOKEN_KEY);
+
         //  Log.e("TAG",string);
         initView();
         toolbarSetting();
         if (Build.VERSION.SDK_INT>=23){
             permissionCheck();
         }
+
     }
 
 
@@ -84,8 +89,12 @@ public class ContactActivity extends AppCompatActivity implements View.OnClickLi
 
 
     private void initView() {
+        tv_name = ((TextView) findViewById(R.id.tv_login_name));
         toolbarContact = ((Toolbar) findViewById(R.id.toolbar_contact));
         recyclerContacts = ((RecyclerView) findViewById(R.id.recycler_contacts));
+        SharedPreferences sp = getSharedPreferences(Constants.SHARED_PREF, Context.MODE_PRIVATE);
+        String name = sp.getString(Constants.INFO_NAME, "");
+        tv_name.setText(getResources().getString(R.string.user_name)+": "+name);
         buttonDownload = ((Button) findViewById(R.id.download));
         buttonClear = ((Button) findViewById(R.id.clear));
         buttonClear.setOnClickListener(this);

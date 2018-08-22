@@ -63,17 +63,15 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        boolean hasPref = getUserInfo();
-        if (hasPref) {
-            getHttpInfo();
-        }
         setContentView(R.layout.activity_main);
         bindView();
         toolbarSetting();
         if (Build.VERSION.SDK_INT >= 23) {
             permissionCheck();
         }
-
+        if (getUserInfo()) {
+            getHttpInfo();
+        }
     }
 
     @RequiresApi(api = Build.VERSION_CODES.M)
@@ -165,7 +163,8 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         passwordInfo = sharedPreferences.getString(Constants.INFO_PASSWORD, "");
         userInfo = sharedPreferences.getString(Constants.INFO_NAME, "");
         if (passwordInfo != "" && userInfo != "") {
-
+            editUser.setText(userInfo);
+            editPassword.setText(passwordInfo);
             return true;
         } else {
             return false;
@@ -281,10 +280,9 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
     @Override
     protected void onResume() {
         super.onResume();
-        if (getUserInfo()){
-          bindView();
-          editPassword.setText(passwordInfo);
-          editUser.setText(userInfo);
+        if (getUserInfo()) {
+            editPassword.setText(passwordInfo);
+            editUser.setText(userInfo);
         }
     }
 }

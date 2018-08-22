@@ -43,5 +43,15 @@
             android:layout_weight="1.0"
             android:background="@drawable/corner_bg_delete"
             android:text="@string/clear_contacts" />
+
     </LinearLayout>
+
+    <TextView
+        android:paddingBottom="48dp"
+        android:id="@+id/tv_login_name"
+        android:gravity="center"
+        android:textSize="24sp"
+        android:layout_alignParentBottom="true"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content" />
 </RelativeLayout>

@@ -15,5 +15,7 @@ public class Constants {
 
     public static final String BASE_URL_RELEASE="http://221.226.138.66:9999/api/v1/";
 
+    public static final String DOWNLOAD_APPANDIX="dloadv";
+
     public static final String TOKEN_KEY = "token";  //传token的key
 }
