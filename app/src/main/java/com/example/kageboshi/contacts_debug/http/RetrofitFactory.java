@@ -1,6 +1,7 @@
 package com.example.kageboshi.contacts_debug.http;
 
 import android.content.Context;
+import android.util.Log;
 
 import com.example.kageboshi.contacts_debug.utils.Constants;
 import com.example.kageboshi.contacts_debug.utils.WifiUtil;
@@ -32,8 +33,10 @@ public class RetrofitFactory {
         String url = "";
         if (WifiUtil.isWifi(context)) {
             url = BASE_URL_DEBUG;
+            Log.e("net","wifi");
         } else {
             url = BASE_URL_RELEASE;
+            Log.e("net","mobile");
         }
 
         if (null == retrofit) {

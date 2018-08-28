@@ -139,7 +139,7 @@ public class ContactActivity extends AppCompatActivity implements View.OnClickLi
 
                     @Override
                     public void onNext(ContactResponseModel contactResponseModel) {
-                        Log.e("TAG", "SUCCESS");
+                        Log.e("TAG1", "SUCCESS");
                         contactsList = contactResponseModel.getData().getContacts();
                         if (contactsList.size() > 0) {
                             writeintoPhone();
