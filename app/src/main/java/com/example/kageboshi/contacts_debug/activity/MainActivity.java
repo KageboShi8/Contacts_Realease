@@ -6,8 +6,8 @@ import android.app.ProgressDialog;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
+import android.content.IntentFilter;
 import android.content.SharedPreferences;
-import android.content.pm.PackageInfo;
 import android.content.pm.PackageManager;
 import android.os.Build;
 import android.support.annotation.NonNull;
@@ -27,23 +27,21 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import com.example.kageboshi.contacts_debug.R;
-import com.example.kageboshi.contacts_debug.activity.ContactActivity;
+import com.example.kageboshi.contacts_debug.http.DownloadAsync;
 import com.example.kageboshi.contacts_debug.http.RetrofitFactory;
-import com.example.kageboshi.contacts_debug.http.RetrofitService;
 import com.example.kageboshi.contacts_debug.http.model.LoginRequestModel;
 import com.example.kageboshi.contacts_debug.http.model.LoginResponseModel;
+import com.example.kageboshi.contacts_debug.http.model.VersionResponseModel;
 import com.example.kageboshi.contacts_debug.utils.Constants;
 import com.example.kageboshi.contacts_debug.utils.ToastUtil;
 import com.google.gson.Gson;
 
 import io.reactivex.Observer;
-import io.reactivex.Scheduler;
 import io.reactivex.android.schedulers.AndroidSchedulers;
 import io.reactivex.disposables.Disposable;
 import io.reactivex.schedulers.Schedulers;
 import okhttp3.MediaType;
 import okhttp3.RequestBody;
-import okhttp3.ResponseBody;
 
 public class MainActivity extends AppCompatActivity implements View.OnClickListener {
 
@@ -57,7 +55,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
     private String userInfo;
     private String passwordInfo;
     private String imei;
-    private ProgressDialog progressDialog;
+
 
     @RequiresApi(api = Build.VERSION_CODES.M)
     @Override
@@ -70,59 +68,61 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
             permissionCheck();
         }
         if (getUserInfo()) {
-            getHttpInfo();
+            getHttpLoginInfo();
         }
     }
 
     @RequiresApi(api = Build.VERSION_CODES.M)
     private void permissionCheck() {
-        if (checkSelfPermission(Manifest.permission.READ_PHONE_STATE) != PackageManager.PERMISSION_GRANTED) {
-            requestPermissions(new String[]{Manifest.permission.READ_PHONE_STATE}, Constants.PHONE_STATE_REQUEST_CODE);
+        if (checkSelfPermission(Manifest.permission.READ_PHONE_STATE) != PackageManager.PERMISSION_GRANTED
+                || checkSelfPermission(Manifest.permission.READ_EXTERNAL_STORAGE) != PackageManager.PERMISSION_GRANTED
+                || checkSelfPermission(Manifest.permission.WRITE_EXTERNAL_STORAGE) != PackageManager.PERMISSION_GRANTED) {
+            requestPermissions(new String[]{Manifest.permission.READ_PHONE_STATE
+                    , Manifest.permission.WRITE_EXTERNAL_STORAGE
+                    , Manifest.permission.READ_EXTERNAL_STORAGE}, Constants.PHONE_STATE_REQUEST_CODE);
             return;
         }
     }
-
 
     private void toolbarSetting() {
         toolbarMain.setTitle("");
         setSupportActionBar(toolbarMain);
         textTitle = ((TextView) toolbarMain.findViewById(R.id.textTitle));
         textTitle.setText(getResources().getText(R.string.login));
-        toolbarMain.setOnMenuItemClickListener(new Toolbar.OnMenuItemClickListener() {
-            @Override
-            public boolean onMenuItemClick(MenuItem menuItem) {
-                switch (menuItem.getItemId()) {
-                    case R.id.menu_version_number:
-                        PackageManager packageManager = getPackageManager();
-                        try {
-                            String versionName = packageManager.getPackageInfo(getPackageName(), 0).versionName;
-                            Log.e("aaa", versionName);
-                            ToastUtil.show(getApplicationContext(), getResources().getString(R.string.version_number_is) + versionName);
-                        } catch (PackageManager.NameNotFoundException e) {
-                            e.printStackTrace();
-                        }
-
-                        break;
-                    case R.id.menu_update_address:
-                        ToastUtil.show(getApplicationContext(), "暂未开放此功能");
-                        break;
-                    case R.id.menu_update:
-                        ToastUtil.show(getApplicationContext(), R.string.no_update);
-                        break;
-                }
-
-                return false;
-            }
-        });
+//        toolbarMain.setOnMenuItemClickListener(new Toolbar.OnMenuItemClickListener() {
+//            @Override
+//            public boolean onMenuItemClick(MenuItem menuItem) {
+//                switch (menuItem.getItemId()) {
+//                    case R.id.menu_version_number:
+//                        PackageManager packageManager = getPackageManager();
+//                        try {
+//                            String versionName = packageManager.getPackageInfo(getPackageName(), 0).versionName;
+//                            Log.e("aaa", versionName);
+//                            ToastUtil.show(getApplicationContext(), getResources().getString(R.string.version_number_is) + versionName);
+//                        } catch (PackageManager.NameNotFoundException e) {
+//                            e.printStackTrace();
+//                        }
+//
+//                        break;
+//                    case R.id.menu_update_address:
+//                        ToastUtil.show(getApplicationContext(), "暂未开放此功能");
+//                        break;
+//                    case R.id.menu_update:
+//                        //  ToastUtil.show(getApplicationContext(), R.string.no_update);
+//                        getHttpUpdateInfo();
+//                        break;
+//                }
+//
+//                return false;
+//            }
+//        });
     }
 
-
-    @Override
-    public boolean onCreateOptionsMenu(Menu menu) {
-        getMenuInflater().inflate(R.menu.menu_main, menu);
-        return true;
-    }
-
+    //    @Override
+//    public boolean onCreateOptionsMenu(Menu menu) {
+//        getMenuInflater().inflate(R.menu.menu_main, menu);
+//        return true;
+//    }
 
     private void bindView() {
         toolbarMain = ((Toolbar) findViewById(R.id.toolbar_main));
@@ -134,7 +134,6 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         buttonLogin.setOnClickListener(this);
     }
 
-
     @Override
     public void onClick(View view) {
         switch (view.getId()) {
@@ -143,7 +142,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
                 checkLoginInfo();
                 if (!userInfo.equals("") && !passwordInfo.equals("") && null != imei) {
                     saveUserInfo();
-                    getHttpInfo();
+                    getHttpLoginInfo();
                 }
                 break;
         }
@@ -156,7 +155,6 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         edit.putString(Constants.INFO_PASSWORD, passwordInfo);
         edit.commit();
     }
-
 
     private boolean getUserInfo() {
         SharedPreferences sharedPreferences = getSharedPreferences(Constants.SHARED_PREF, Context.MODE_PRIVATE);
@@ -172,7 +170,13 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
     }
 
 
-    private void getHttpInfo() {
+
+
+
+
+
+
+    private void getHttpLoginInfo() {
         RetrofitFactory.getInstance(MainActivity.this)
                 .postCall(RequestBody.create(MediaType.parse("application/json; charset=utf-8"), initPostInfo()))
                 .subscribeOn(Schedulers.io()).observeOn(AndroidSchedulers.mainThread()).subscribe(new Observer<LoginResponseModel>() {
@@ -238,7 +242,6 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         return json;
     }
 
-
     private void checkLoginInfo() {
         if (userInfo.equals("")) {
             ToastUtil.show(this, R.string.name_illegal);
@@ -269,7 +272,9 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
     @Override
     public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions, @NonNull int[] grantResults) {
         if (requestCode == Constants.PHONE_STATE_REQUEST_CODE) {
-            if (grantResults.length != 1 || grantResults[0] != PackageManager.PERMISSION_GRANTED) {
+            if (grantResults.length != 3 || grantResults[0] != PackageManager.PERMISSION_GRANTED
+                    || grantResults[1] != PackageManager.PERMISSION_GRANTED
+                    || grantResults[2] != PackageManager.PERMISSION_GRANTED) {
                 ToastUtil.show(this, R.string.permission_denied);
             }
         } else {
