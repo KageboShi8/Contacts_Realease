@@ -76,7 +76,8 @@ public class ContactActivity extends AppCompatActivity implements View.OnClickLi
 
     @RequiresApi(api = Build.VERSION_CODES.M)
     private void permissionCheck() {
-        if (checkSelfPermission(Manifest.permission_group.CONTACTS) != PackageManager.PERMISSION_GRANTED) {
+        if (checkSelfPermission(Manifest.permission.WRITE_CONTACTS) != PackageManager.PERMISSION_GRANTED
+                || checkSelfPermission(Manifest.permission.READ_CONTACTS) != PackageManager.PERMISSION_GRANTED) {
             requestPermissions(new String[]{Manifest.permission.WRITE_CONTACTS, Manifest.permission.READ_CONTACTS}, Constants.CONTACTS_REQUEST_CODE);
             return;
         }
@@ -168,12 +169,17 @@ public class ContactActivity extends AppCompatActivity implements View.OnClickLi
                     public void onNext(ContactResponseModel contactResponseModel) {
                         Log.e("TAG", "SUCCESS");
                         contactsList = contactResponseModel.getData().getContacts();
-                        if (contactsList.size() > 0) {
-                            writeintoPhone();
-                            recyclerContacts.setVisibility(View.VISIBLE);
-                            showContacts();
-                            ToastUtil.show(getApplicationContext(), R.string.contacts_downloaded);
+                        if (null != contactsList) {
+                            if (contactsList.size() > 0) {
+                                writeintoPhone();
+                                recyclerContacts.setVisibility(View.VISIBLE);
+                                showContacts();
+                                ToastUtil.show(getApplicationContext(), R.string.contacts_downloaded);
+                            }
+                        } else {
+                            ToastUtil.show(getApplicationContext(), R.string.contacts_empty);
                         }
+
                     }
 
                     @Override
@@ -252,7 +258,6 @@ public class ContactActivity extends AppCompatActivity implements View.OnClickLi
                         } else {
                             ToastUtil.show(getApplicationContext(), R.string.no_update);
                         }
-
                     }
 
                     @Override
@@ -277,7 +282,6 @@ public class ContactActivity extends AppCompatActivity implements View.OnClickLi
     }
 
     private void alertDownload(final String url) {
-
         AlertDialog.Builder builder = new AlertDialog.Builder(this);
         builder.setTitle("提示");
         builder.setMessage("检测到有新版本app 是否下载?");

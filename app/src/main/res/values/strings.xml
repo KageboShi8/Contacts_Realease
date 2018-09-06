@@ -7,6 +7,8 @@
     <string name="contacts_clear">联系人已清空</string>
     <string name="download_contacts">下载联系人</string>
     <string name="contacts_downloaded">联系人已下载</string>
+    <string name="contacts_empty">无联系人数据</string>
+
 
     <string name="login">登录</string>
     <string name="login_fail">登录失败</string>
