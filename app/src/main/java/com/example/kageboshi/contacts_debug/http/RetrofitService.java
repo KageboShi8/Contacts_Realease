@@ -3,6 +3,7 @@ package com.example.kageboshi.contacts_debug.http;
 import com.example.kageboshi.contacts_debug.http.model.ContactResponseModel;
 import com.example.kageboshi.contacts_debug.http.model.LoginRequestModel;
 import com.example.kageboshi.contacts_debug.http.model.LoginResponseModel;
+import com.example.kageboshi.contacts_debug.http.model.NotificationResponseModel;
 import com.example.kageboshi.contacts_debug.http.model.VersionResponseModel;
 
 import io.reactivex.Observable;
@@ -34,5 +35,9 @@ public interface RetrofitService {
     @GET("dloadv")
     Observable<VersionResponseModel> getVersion(@Query("version") String version);
 
+
+    @Headers({"User-Agent:dalvik/2.1.0 (linux; u; android 7.0; redmi note 4x miui/v9.5.2.0.ncfcnfa"})
+    @GET("useMessage")
+    Observable<NotificationResponseModel> getNotificationMessage();
 }
 

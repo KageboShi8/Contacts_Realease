@@ -7,6 +7,7 @@ import android.content.Context;
 import android.database.Cursor;
 import android.net.Uri;
 import android.provider.ContactsContract;
+import android.util.Log;
 
 public class ContactsUtils {
 
@@ -36,14 +37,17 @@ public class ContactsUtils {
                 String name = cursor.getString(cursor
                         .getColumnIndex(ContactsContract.Contacts.DISPLAY_NAME));
                 Uri uri = Uri.parse("content://com.android.contacts/raw_contacts");
-                Cursor cursor1 = cr.query(uri, new String[]{ContactsContract.Data._ID}, "display_name=?", new String[]{name}, null);
+
+                    Cursor cursor1 = cr.query(uri, new String[]{ContactsContract.Data._ID}, "display_name=?", new String[]{name}, null);
                 if (cursor1.moveToFirst()) {
                     int id = cursor1.getInt(0);
                     //根据id删除data中的相应数据
+                    Log.e("Tag",id+"");
                     cr.delete(uri, "display_name=?", new String[]{name});
                     uri = Uri.parse("content://com.android.contacts/data");
                     cr.delete(uri, "raw_contact_id=?", new String[]{id + ""});
                 }
+
             }
         }
     }

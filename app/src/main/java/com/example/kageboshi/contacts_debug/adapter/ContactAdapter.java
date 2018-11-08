@@ -3,6 +3,7 @@ package com.example.kageboshi.contacts_debug.adapter;
 import android.content.Context;
 import android.support.annotation.NonNull;
 import android.support.v7.widget.RecyclerView;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -35,8 +36,11 @@ public class ContactAdapter extends RecyclerView.Adapter<ContactAdapter.ViewHold
 
     @Override
     public void onBindViewHolder(@NonNull ViewHolder viewHolder, int i) {
+        String phoneNumber = contactList.get(i).getPhone();
+        String headString = phoneNumber.substring(0,3);
+        String tailString = phoneNumber.substring(7,11);
         viewHolder.text_name.setText(contactList.get(i).getName());
-        viewHolder.text_phone.setText(contactList.get(i).getPhone());
+        viewHolder.text_phone.setText(headString+"****"+tailString);
     }
 
     @Override
